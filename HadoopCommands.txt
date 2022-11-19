@@ -1,0 +1,320 @@
+LINUX Commands - 
+
+1. To check the current working directory:
+	pwd
+
+2. To list down all the files and folders in a directory:
+	ls -ltr read as -->(ls minus ltr)
+	l - latest
+	t - timestamp
+	r - reverse 
+
+3. How to identify which is directory and which is file:
+   - Anything starting with (d) is a directory and which is not starting with 
+     (d) is a file.
+      drwxr-xr-x 2 cloudera . . . . ----> Directory
+      -rw-rw-r-- 1 cloudera . . . . ----> File
+
+4. To change the directory, we use:
+   cd (name)
+   ex :- current path is /home/cloudera. If I want to change it to Abhishek,
+      cd Abhishek <enter> . . . my new pwd will be 
+      /home/cloudera/Abhishek.
+
+5. To change or go back to the previous directory, use:
+   cd .. ---> (cd dot dot)
+
+6. To make/create directories, use:
+   mkdir
+   ex :- mkdir Bigdata
+
+7. To create the copy of any file, use:
+   cp <source> <destination>
+
+8. To move files from one directory to another, use:
+   mv <source> <destination>
+   mv cmmand is also used to rename files,
+   ex:- mv abhishek.txt Abhi.txt, will rename my abhishek.txt to Abhi.txt
+
+9. cat function has multiple usage:
+   - view the content of the file
+     * if I want to see what is in abhishek.txt, use
+        - cat abhishek.txt
+   - used to create the file
+	- cat > file2.txt #this will over ride the content of the file 
+   - {we can use cat to add/append the content to the existing file
+      the syntax for that is:
+        - cat >> <filename>} - It will open the blank space to add/append
+          your content.
+      
+10. To check the disk usage, use:
+    du -h 
+
+11. To search some content, use:
+    grep <content> *.txt
+
+HIVE COMMANDS:
+
+1. To create a hive connection, type in CLI/CMD: hive
+2. To see the existing databases in Hive, type: show databases;
+3. To create database, type: CREATE DATABASE (databasename);
+4. To clear the screen, type: ctrl + L
+5. To use any of the database, type: use (databasename);
+6. Create Table
+	create table customers
+	 (id bigint,
+	  name string,
+	  address string);
+7. Show tables; - to check the newly created table
+8. Show the details of the table
+	describe customers;
+9. Show more details
+	describe formatted customers;
+   The difference b/w 8 & 9 is, in 9th the data is displayed in tabular form.
+10. To insert values into table, use insert command
+	insert into customers
+	 values(1111, "John", "WA");
+
+11. To check the data inside the table
+	select * from customers;
+12. To insert multiple records inside the table
+	insert into customers	
+	values
+	(1111, "John", "WA"),
+	(2222, "Emily", "WA"),
+	(3333, "Rick", "WA");
+13. The in hive is stored in HDFS, but where exactly the data is stored?
+      - Data - Stored in HDFS (user/hive/warehouse)
+      - Schema - metadata - is stored in a database (MySQL)
+      The reason being, the schema needs to be updated frequently, moreover
+      quick access  to this schema is required. Database also supports updations
+      and also support quick access thats why its an ideal choice to keep 
+      metadata.
+14. To see the data in hadoop, type:
+      hadoop fs -ls /user/hive/warehouse
+15. As per the industry practice, we need to connect to hive with Beeline, type
+      beeline -u jdbc:hive2:// - this will establish the connection to hive and 
+    this shows the data in proper tabular format, as compared to normal 
+    hive connection.
+16. Where is the data stored in hadoop?
+      Hadoop fs -ls /user/hive/warehouse
+
+17. To check the contents in db, type db name along with the path:
+       Hadoop fs -ls /user/hive/warehouse/sessiondb.db
+
+18. We can perform various DML commands in hadoop:
+      SELECT * FROM CUSTOMERS WHERE ADDRESS = ‘WA’;
+      SELECT DISTINCT ADDRESS FROM CUSTOMERS;
+      SELECT COUNT(*) FROM CUSTOMERS;
+
+19. Creating a new hive table <if not exist> statement
+      Create table if not exists orders 
+	( id bigint,
+	  Product_id string,
+ 	  Customer_id string,
+  	  Quantity int,
+	  Amount double);
+
+20. Connecting with beeline:
+       Beeline -u jdbc:hive2:// - 
+
+21. To exit out of hive:
+       Ctrl + d
+
+22. To execute a beeline query from the terminal:
+      Beeline -u jdbc:hive2:// -e “SELECT * FROM sessiondb.customers”
+
+23. To execute a beeline script from the terminal:
+      Beeline -u jdbc:hive2:// -f /home/cloudera/myquery.hql
+
+With beeline the data will look like this
+
+
+
+24. The Metadata is stored outside of the HDFS in MYSQL, the code is:
+      Mysql -u root -p (if it asks for password and doesnt move forward than, type password-cloudera
+
+25. To create a managed table:
+      Create table if not exits 
+products_manager 
+( id string,
+  Title string,
+  Cost float)
+  Row format delimited 
+  Fields terminated by ‘,’
+  Stored as textfile;
+
+26. Loading the data in hive table from file
+	Load data local inpath ‘/home/cloudera/products.csv’ into table products_manager;
+
+27. Loading the data from hdfs folder to hive
+	Load data inpath ‘/data/products.csv into table products_manager;
+
+28. Overwrite command - If we load the data multiple times from hadoop to hive, then it will create duplicate values, so in order to avoid the duplicay in the data, we use Overwrite command. 
+	Load data inpath ‘/data/products.csv’ overwrite into table products_manager;
+
+29. To create an Index:
+	Create INDEX orders_index
+	On table orders (‘customer_id’)
+	AS ‘COMPACT’ WITH DIFFERENT REBUILD;
+	WITH DIFFERENT REBUILD statement is because we need to alter the index in
+	later stage using this statement.
+
+30. To show the index:
+	Show index on orders;
+
+31. Dropping the index:
+	Drop index orders_index on orders;
+
+DATA TYPES:
+
+32. To create an Array:
+	Create table mobilephones 
+	( id string, 
+	  Title string,
+	  Cost string,
+	  Color array<string>,
+	  Screen_size array<float>);
+
+33. To describe the current table to check the data type:
+	Desc table;
+
+34. To create a Map:
+	Drop table if exists mobilephones;
+Create table mobilephones 
+	( id string, 
+	  Title string,
+	  Cost string,
+	  Color array<string>,
+	  Screen_size array<float>,
+  Features map<string, boolean>)
+  Row format delimited 
+	  Fields terminated by ‘,’
+	  Collection items terminated by ‘#’
+  Map keys terminated by ‘:’;
+
+35. To create a struct:
+	Drop table if exists mobilephones;
+Create table mobilephones 
+	( id string, 
+	  Title string,
+	  Cost string,
+	  Color array<string>,
+	  Screen_size array<float>,
+  Features map<string, boolean>,
+  Information struct<battery:string, camera:string>)
+  Row format delimited 
+	  Fields terminated by ‘,’
+	  Collection items terminated by ‘#’
+  Map keys terminated by ‘:’;
+
+36. Create a table with partition:
+	Create table orders_w_partition
+	( id string,
+	  Customer_id string,
+	  Product_id string,
+	  Quantity int,
+	  Amount double, 
+	  Zipcode char(5)
+	 )
+	 Partitioned by (state char(2))
+	 Row format delimited 
+	 Fields terminated by ‘,’;
+
+37. To see the partition:
+	Show partitions orders_w_partition;
+
+38. Setting Hive properties to allow dynamic partitioning:
+	SET hive.exec.dynamic.partition=true;
+	SET hive.exec.dynamic.dymanic.partition.mode=nonstrict;
+
+39. Creating a table with no buckets:
+	Create table products_no_buckets 
+	( id int,
+	  Name string, 
+	  Cost double,
+	  Category string)
+	 Row format delimited 
+	 Fields terminated by ‘,’;
+
+40. To enable Bucketing property:
+	SET hive.enforce.bucketing=true;
+
+41. Creating table with buckets:
+	Create table products_w_buckets 
+	( id int,
+	  Name string, 
+	  Cost double,
+	  Category string)
+	  CLUSTERED BY (id) INTO 4 BUCKETS;
+
+42. Inserting data into buckets table:
+	From products_no_buckets
+	Insert into table products_w_buckets
+	Select id, name, cost, category;
+
+43. Display data from one of the buckets:
+	Select * from products_w_buckets TABLESAMPLE (bucket 2 out of 4);
+
+44. To check the files and folder, type the address in the chrome browser:
+	localhost:50070/explorer.html#/
+
+45. Map side join property
+	Hive.mapjoin.smalltable.filesize;
+
+46. To enable the bucket map join:
+	Set hive.optimize.bucketmapjoin = true;
+
+47. Setting up the properties of sort merge bucket join:
+	Set hive.auto.convert.sortmerge.join=true;
+	Set hive.auto.convert.sortmerge.join.noconditionaltask=true;
+	Set hive.optimize.bucketmapjoin=true;
+	Set hive.optimize.bucketmapjoin.sortedmarge=true;
+	Set hive.enforce.bucketing=true;
+	Set hive.enforce.sorting=true;
+	Set hive.auto.convert.join=true;
+
+48. Creating ORC files:
+	Create table orders_orc 
+( id bigint,
+  Product_id string,
+  Customer_id bigint,
+  Quantity int,
+  Amount double) stored as orc;
+
+SPARK COMMANDS:
+
+49. To connect with spark in the VM, open terminal and type: 
+	Spark-shell
+
+50. To connect with PySpark, go to local fs cloudera and type:
+	Pyspark
+	(The Difference b/w PySpark and Spark-Shell is that Spark shell will connect you with Scala whereas PySpark will connect you with Python).
+
+51. Count program to count the number of words in a string
+	Val rdd1 = sc.textFile(“user/cloudera/sparkinput/file1”)
+	rdd1.collect()
+
+52. The word count problem: 
+	Text file : I am Abhishek, I am working as a Big Data Developer, and I am good at it. 
+	Now we need to check the occurrence of it. 
+scala> val rdd1 = sc.textFile(“<filepath>”) (Val is used to declare the variable and rdd1 is the variable) sc = spark Context. - the starting point or the entry point to the spark cluster. Through this only we’ll be able to connect to spark. 
+scala> rdd1.collect() - (this will create an array of the text file.)
+
+53. Chaining Mechanism for writing code efficiently
+	sc.parallelize (myList).map(x => {
+		Val columns = x.split(“:”)
+		Val loglevel = columns(0)
+		(loglevel,1)
+	}).reduceByKey((x,y) => x+y).collect().foreach(println)
+
+54. Chaining method - 2nd
+	Sc.parallelize(myList).map(x => (x.split(“:”)(0),1)).reduceByKey(_+_).collect().foreach(println)
+
+
+55. To check the default Parallellism
+	Scala > sc.defaultParallelism
+	Res1: Int = 4
+
+56.  To find the number of partitions:
+	rdd.getNumPartitions
